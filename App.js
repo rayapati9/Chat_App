@@ -1,24 +1,29 @@
-import Screen1 from "./components/Screen1";
-import Screen2 from "./components/Screen2";
-
+import React, { Component } from "react";
+import Start from "./components/Start";
+import Chat from "./components/Chat";
+import { StatusBar } from "expo-status-bar";
+// import react native gesture handler
 import "react-native-gesture-handler";
 
+// import react Navigation
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 
-import React, { Component } from "react";
-import { Alert, Button, StyleSheet, Text, TextInput, View } from "react-native";
-
-const Stack = createStackNavigator();
-
-export default class App extends React.component {
+export default class App extends React.Component {
   render() {
+    const Stack = createStackNavigator();
     return (
       <NavigationContainer>
-        <Stack.Navigator initialRouteName="Screen1">
-          <Stack.Screen name="Screen1" component={Screen1} />
-          <Stack.Screen name="Screen2" component={Screen2} />
+        <Stack.Navigator initialRouteName="Start">
+          <Stack.Screen name="Home" component={Start} />
+          <Stack.Screen
+            name="Chat"
+            component={Chat}
+            // import username from start
+            options={({ route }) => ({ title: route.params.name })}
+          />
         </Stack.Navigator>
+        <StatusBar style="auto" />
       </NavigationContainer>
     );
   }

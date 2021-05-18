@@ -1,16 +1,217 @@
 import React from "react";
-import { View, Text, Button } from "react-native";
+import {
+  StyleSheet,
+  View,
+  Text,
+  TextInput,
+  Button,
+  ImageBackground,
+} from "react-native";
+import { TouchableOpacity } from "react-native-gesture-handler";
 
-export default class Screen1 extends React.Component {
+export default class Start extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      name: "",
+      bgColor: "",
+      btnPressed: false,
+    };
+  }
+
   render() {
+    // import image for Start background
+    const image = require("../assets/background-image.png");
+
     return (
-      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-        <Text>Hello Screen1!</Text>
-        <Button
-          title="go to Screen 2"
-          onPress={() => this.props.navigation.navigate("Screen 2")}
-        />
-      </View>
+      <ImageBackground source={image} style={styles.backgroundImage}>
+        <View style={styles.container}>
+          {/* app title */}
+          <View style={styles.appTitleContainer}>
+            <Text style={styles.appTitle}>Chat App</Text>
+          </View>
+
+          <View style={styles.userContainer}>
+            {/* username input */}
+            <TextInput
+              style={styles.textInput}
+              onChangeText={(name) => this.setState({ name })}
+              value={this.state.name}
+              placeholder="Type username here"
+            />
+            <Text style={styles.usernameText}>{this.state.name} </Text>
+
+            {/* choose background color */}
+            <View style={styles.colorContainer}>
+              <Text style={styles.colorTitle}>Choose Background Color:</Text>
+              {/* background color options */}
+              <View style={styles.colorOptions}>
+                <TouchableOpacity
+                  onPress={() =>
+                    this.setState({ bgColor: "orange", btnPressed: true })
+                  }
+                  style={styles.colorOne}
+                ></TouchableOpacity>
+
+                <TouchableOpacity
+                  onPress={() => this.setState({ bgColor: "green" })}
+                  style={styles.colorTwo}
+                ></TouchableOpacity>
+
+                <TouchableOpacity
+                  onPress={() => this.setState({ bgColor: "#8A95A5" })}
+                  style={styles.colorThree}
+                ></TouchableOpacity>
+
+                <TouchableOpacity
+                  onPress={() => this.setState({ bgColor: "#B9C6AE" })}
+                  style={styles.colorFour}
+                ></TouchableOpacity>
+              </View>
+            </View>
+
+            {/* navigate to chat screen */}
+            <View style={styles.chatButton}>
+              <Button
+                style={styles.chatButtonText}
+                title="Start Chatting"
+                color="white"
+                onPress={() =>
+                  this.props.navigation.navigate("Chat", {
+                    name: this.state.name,
+                    bgColor: this.state.bgColor,
+                  })
+                }
+              />
+            </View>
+          </View>
+        </View>
+      </ImageBackground>
     );
   }
 }
+
+//---------- Styles ----------//
+const styles = StyleSheet.create({
+  backgroundImage: {
+    flex: 1,
+    justifyContent: "center",
+    width: "100%",
+    height: "100%",
+    resizeMode: "cover",
+  },
+
+  container: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    padding: 15,
+  },
+
+  appTitleContainer: {
+    width: "88%",
+    height: "56%",
+  },
+
+  appTitle: {
+    position: "relative",
+    textAlign: "center",
+    margin: 20,
+    marginRight: "auto",
+    marginLeft: "auto",
+    color: "#FFFFFF",
+    top: 100,
+    height: "44%",
+    fontSize: 45,
+    fontWeight: "600",
+  },
+
+  userContainer: {
+    width: "88%",
+    height: "44%",
+    backgroundColor: "white",
+    padding: "auto",
+    borderRadius: 5,
+  },
+
+  textInput: {
+    borderColor: "gray",
+    color: "#757083",
+    borderWidth: 1,
+    fontSize: 16,
+    fontWeight: "300",
+    opacity: 50,
+    position: "relative",
+    padding: 5,
+    margin: 20,
+  },
+
+  usernameText: {
+    fontSize: 16,
+    fontWeight: "600",
+    marginLeft: 20,
+  },
+
+  colorContainer: {
+    margin: 20,
+  },
+
+  colorTitle: {
+    fontSize: 16,
+    fontWeight: "300",
+    color: "#757083",
+    opacity: 100,
+  },
+
+  colorOptions: {
+    flexDirection: "row",
+    marginRight: 5,
+    position: "relative",
+  },
+
+  colorOne: {
+    backgroundColor: "orange",
+    width: 50,
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    margin: 10,
+  },
+
+  colorTwo: {
+    backgroundColor: "green",
+    width: 50,
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    margin: 10,
+  },
+
+  colorThree: {
+    backgroundColor: "#8A95A5",
+    width: 50,
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    margin: 10,
+  },
+
+  colorFour: {
+    backgroundColor: "#B9C6AE",
+    width: 50,
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    margin: 10,
+  },
+
+  chatButton: {
+    backgroundColor: "#757083",
+  },
+
+  chatButtonText: {
+    fontSize: 16,
+    fontWeight: "600",
+    color: "white",
+  },
+});
