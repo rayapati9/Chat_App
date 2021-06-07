@@ -1,6 +1,11 @@
 import React, { Component } from "react";
 import { StyleSheet, View, Platform, KeyboardAvoidingView } from "react-native";
-import { Bubble, GiftedChat } from "react-native-gifted-chat";
+import { Bubble, GiftedChat, InputToolbar } from "react-native-gifted-chat";
+
+import AsyncStorage from "@react-native-async-storage/async-storage";
+
+import NetInfo from "@react-native-community/netinfo";
+
 const firebase = require("firebase");
 require("firebase/firestore");
 
@@ -25,7 +30,9 @@ class Chat extends Component {
         name: "",
         avatar: "",
       },
+      isConnected: false,
     };
+
     // initialises connection to Firebase DB
     if (!firebase.apps.length) {
       firebase.initializeApp(firebaseConfig);
@@ -39,26 +46,38 @@ class Chat extends Component {
     const { name } = this.props.route.params;
     this.props.navigation.setOptions({ title: name });
 
-    // authenticates user with firebase
-    this.authUnsubscribe = firebase.auth().onAuthStateChanged(async (user) => {
-      if (!user) {
-        await firebase.auth().signInAnonymously();
+    // checks user connection
+    NetInfo.fetch().then((connection) => {
+      if (connection.isConnected) {
+        this.setState({ isConnected: true });
+
+        // authenticates user with firebase
+        this.authUnsubscribe = firebase
+          .auth()
+          .onAuthStateChanged(async (user) => {
+            if (!user) {
+              await firebase.auth().signInAnonymously();
+            }
+
+            this.setState({
+              uid: user.uid,
+              user: {
+                _id: user.uid,
+                name: name,
+                avatar: "https://placeimg.com/140/140/any",
+              },
+              messages: [],
+            });
+
+            // listens for changes to DB
+            this.unsubscribeChatUser = this.referenceChatMessages
+              .orderBy("createdAt", "desc")
+              .onSnapshot(this.onCollectionUpdate);
+          });
+      } else {
+        this.setState({ isConnected: false });
+        this.getMessages();
       }
-
-      this.setState({
-        uid: user.uid,
-        user: {
-          _id: user.uid,
-          name: name,
-          avatar: "https://placeimg.com/140/140/any",
-        },
-        messages: [],
-      });
-
-      // listens for changes to DB
-      this.unsubscribeChatUser = this.referenceChatMessages
-        .orderBy("createdAt", "desc")
-        .onSnapshot(this.onCollectionUpdate);
     });
   }
 
@@ -103,6 +122,43 @@ class Chat extends Component {
     });
   }
 
+  // allows offline access to messages retrieved from client-side storage
+  getMessages = async () => {
+    let messages = "";
+    try {
+      messages = (await AsyncStorage.getItem("messages")) || [];
+      this.setState({
+        messages: JSON.parse(messages),
+      });
+    } catch (error) {
+      console.log(error.message);
+    }
+  };
+
+  // saves new message to client-side storage
+  saveMessages = async () => {
+    try {
+      await AsyncStorage.setItem(
+        "messages",
+        JSON.stringify(this.state.messages)
+      );
+    } catch (error) {
+      console.log(error.message);
+    }
+  };
+
+  // deletes messages from client-side storage
+  deleteMessages = async () => {
+    try {
+      await AsyncStorage.removeItem("messages");
+      this.setState({
+        messages: [],
+      });
+    } catch (error) {
+      console.log(error.message);
+    }
+  };
+
   // adds new message to messages array in state
   onSend(messages = []) {
     this.setState(
@@ -111,8 +167,17 @@ class Chat extends Component {
       }),
       () => {
         this.addMessage();
+        this.saveMessages();
       }
     );
+  }
+
+  //disables message input bar if offline
+  renderInputToolbar(props) {
+    if (this.state.isConnected === false) {
+    } else {
+      return <InputToolbar {...props} />;
+    }
   }
 
   // custom styling for active user's message bubble
@@ -136,6 +201,7 @@ class Chat extends Component {
       <View style={[styles.container, { backgroundColor: bgColor }]}>
         <GiftedChat
           renderBubble={this.renderBubble.bind(this)}
+          renderInputToolbar={this.renderInputToolbar.bind(this)}
           messages={this.state.messages}
           onSend={(messages) => this.onSend(messages)}
           user={this.state.user}
