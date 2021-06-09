@@ -1,6 +1,15 @@
 import React, { Component } from "react";
-import { StyleSheet, View, Platform, KeyboardAvoidingView } from "react-native";
+import {
+  StyleSheet,
+  View,
+  Platform,
+  KeyboardAvoidingView,
+  LogBox,
+  Button,
+} from "react-native";
 import { Bubble, GiftedChat, InputToolbar } from "react-native-gifted-chat";
+import CustomActions from "./CustomActions";
+import MapView from "react-native-maps";
 
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
@@ -31,22 +40,29 @@ class Chat extends Component {
         avatar: "",
       },
       isConnected: false,
+      image: null,
     };
-
     // initialises connection to Firebase DB
     if (!firebase.apps.length) {
       firebase.initializeApp(firebaseConfig);
     }
     // reference to all messages in DB
     this.referenceChatMessages = firebase.firestore().collection("messages");
+
+    //Ignores warnings
+    LogBox.ignoreLogs([
+      "Setting a timer",
+      "Animated.event now requires a second argument for options",
+      "expo-permissions is now deprecated",
+    ]);
   }
 
   componentDidMount() {
     // adds user name to header
     const { name } = this.props.route.params;
-    this.props.navigation.setOptions({ title: name });
+    this.props.navigation.setOptions({ title: `${name}'s Chatroom` });
 
-    // checks user connection
+    // checks user connect
     NetInfo.fetch().then((connection) => {
       if (connection.isConnected) {
         this.setState({ isConnected: true });
@@ -96,13 +112,15 @@ class Chat extends Component {
       let data = doc.data();
       messages.push({
         _id: data._id,
-        text: data.text,
+        text: data.text || null,
         createdAt: data.createdAt.toDate(),
         user: {
           _id: data.user._id,
-          name: data.user.nme,
+          name: data.user.name,
           avatar: data.user.avatar,
         },
+        image: data.image || null,
+        location: data.location || null,
       });
     });
     this.setState({
@@ -110,7 +128,7 @@ class Chat extends Component {
     });
   };
 
-  // adds new message to DB
+  // adds new message to server DB
   addMessage() {
     const message = this.state.messages[0];
     this.referenceChatMessages.add({
@@ -119,6 +137,8 @@ class Chat extends Component {
       createdAt: message.createdAt,
       text: message.text || null,
       user: message.user,
+      image: message.image || null,
+      location: message.location || null,
     });
   }
 
@@ -172,16 +192,43 @@ class Chat extends Component {
     );
   }
 
-  //disables message input bar if offline
-  renderInputToolbar(props) {
+  // disables message input bar if offline
+  renderInputToolbar = (props) => {
     if (this.state.isConnected === false) {
     } else {
       return <InputToolbar {...props} />;
     }
-  }
+  };
+
+  // displays additional communication features (photos, camera, map)
+  renderCustomActions = (props) => <CustomActions {...props} />;
+
+  // returns custom map view
+  renderCustomView = (props) => {
+    const { currentMessage } = props;
+    if (currentMessage.location) {
+      return (
+        <MapView
+          style={{
+            width: 150,
+            height: 100,
+            borderRadius: 13,
+            margin: 3,
+          }}
+          region={{
+            latitude: Number(currentMessage.location.latitude),
+            longitude: Number(currentMessage.location.longitude),
+            latitudeDelta: 0.0922,
+            longitudeDelta: 0.0421,
+          }}
+        />
+      );
+    }
+    return null;
+  };
 
   // custom styling for active user's message bubble
-  renderBubble(props) {
+  renderBubble = (props) => {
     return (
       <Bubble
         {...props}
@@ -192,7 +239,7 @@ class Chat extends Component {
         }}
       />
     );
-  }
+  };
 
   render() {
     const { bgColor } = this.props.route.params;
@@ -200,8 +247,11 @@ class Chat extends Component {
     return (
       <View style={[styles.container, { backgroundColor: bgColor }]}>
         <GiftedChat
-          renderBubble={this.renderBubble.bind(this)}
-          renderInputToolbar={this.renderInputToolbar.bind(this)}
+          renderBubble={this.renderBubble}
+          renderInputToolbar={this.renderInputToolbar}
+          renderUsernameOnMessage={true}
+          renderActions={this.renderCustomActions}
+          renderCustomView={this.renderCustomView}
           messages={this.state.messages}
           onSend={(messages) => this.onSend(messages)}
           user={this.state.user}

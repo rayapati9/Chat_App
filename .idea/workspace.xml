@@ -13,7 +13,12 @@
     <select />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="3618f7b8-df57-42f5-8141-9dd046e7de4f" name="Default Changelist" comment="" />
+    <list default="true" id="3618f7b8-df57-42f5-8141-9dd046e7de4f" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/components/Chat.js" beforeDir="false" afterPath="$PROJECT_DIR$/components/Chat.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/yarn.lock" beforeDir="false" afterPath="$PROJECT_DIR$/yarn.lock" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -122,17 +127,19 @@
     <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="WindowStateProjectService">
-    <state x="184" y="50" width="1071" height="772" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1621281136601">
-      <screen x="0" y="25" width="1440" height="797" />
+    <state x="184" y="26" width="1071" height="800" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1623193908470">
+      <screen x="0" y="25" width="1440" height="801" />
     </state>
     <state x="184" y="50" width="1071" height="772" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.25.1440.797@0.25.1440.797" timestamp="1621281136601" />
+    <state x="184" y="26" width="1071" height="800" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.25.1440.801/1440.25.1920.1055@0.25.1440.801" timestamp="1623193908470" />
     <state x="184" y="86" width="1071" height="706" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.25.1440.804@0.25.1440.804" timestamp="1621279449571" />
     <state x="184" y="86" width="1071" height="731" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.25.1440.805@0.25.1440.805" timestamp="1621279741078" />
-    <state x="120" y="144" width="1200" height="559" key="AVDManager" timestamp="1621281737541">
-      <screen x="0" y="25" width="1440" height="799" />
+    <state x="120" y="144" width="1200" height="561" key="AVDManager" timestamp="1623184122544">
+      <screen x="0" y="25" width="1440" height="801" />
     </state>
     <state x="120" y="144" width="1200" height="559" key="AVDManager/0.25.1440.797@0.25.1440.797" timestamp="1621281396728" />
     <state x="120" y="144" width="1200" height="559" key="AVDManager/0.25.1440.799@0.25.1440.799" timestamp="1621281737541" />
+    <state x="120" y="144" width="1200" height="561" key="AVDManager/0.25.1440.801/1440.25.1920.1055@0.25.1440.801" timestamp="1623184122544" />
     <state x="120" y="145" width="1200" height="564" key="AVDManager/0.25.1440.804@0.25.1440.804" timestamp="1621279560585" />
     <state x="120" y="145" width="1200" height="564" key="AVDManager/0.25.1440.805@0.25.1440.805" timestamp="1621279744582" />
     <state x="516" y="177" key="AndroidProcessChooserDialog" timestamp="1621281163232">
